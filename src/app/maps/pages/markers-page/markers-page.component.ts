@@ -1,6 +1,11 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Map, LngLat, Marker } from 'maplibre-gl';
 
+interface MarkerAndColor {
+  color: string;
+  marker: Marker;
+}
+
 @Component({
   selector: 'app-markers-page',
   templateUrl: './markers-page.component.html',
@@ -9,6 +14,7 @@ import { Map, LngLat, Marker } from 'maplibre-gl';
 export class MarkersPageComponent {
   @ViewChild('map') divMap!: ElementRef;
 
+  public markers: MarkerAndColor[] = [];
 
   public map?: Map;
   public currentLngLat: LngLat = new LngLat(-0, 0);
@@ -57,6 +63,20 @@ export class MarkersPageComponent {
       draggable: true
     }).setLngLat( lnglat )
       .addTo( this.map );
+
+      this.markers.push({ color, marker });
+  }
+
+  deleteMarker( index: number ){
+    this.markers[index].marker.remove();
+    this.markers.splice(index, 1)
+  }
+
+  flyTo( marker: Marker ){
+    this.map?.flyTo({
+      zoom: 5,
+      center: marker.getLngLat()
+    })
   }
 
 }
